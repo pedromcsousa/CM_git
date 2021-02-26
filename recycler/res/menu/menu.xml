@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/file"
+        android:title="@string/file"
+        android:icon="@drawable/abc_vector_test"
+        app:showAsAction="always">
+        <!-- "file" submenu -->
+        <menu>
+            <item android:id="@+id/create_new"
+                android:title="@string/create_new" />
+            <item android:id="@+id/open"
+                android:title="@string/open" />
+        </menu>
+    </item>
+    <item android:id="@+id/opcao2"
+        android:title="opcao2"
+        app:showAsAction="always">
+
+    </item>
+    <item android:id="@+id/opcao3"
+        android:title="opcao3"
+        app:showAsAction="never">
+
+    </item>
+    <item android:id="@+id/opcao4"
+        android:title="opcao4"
+        app:showAsAction="ifRoom">
+
+    </item>
+
+</menu>

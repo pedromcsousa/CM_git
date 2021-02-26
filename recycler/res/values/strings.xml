@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">kotlin1</string>
+    <string name="welcome" translatable="false">Welcome to the app</string>
+    <string name="file">File</string>
+    <string name="create_new">Create</string>
+    <string name="open">Open</string>
+</resources>
