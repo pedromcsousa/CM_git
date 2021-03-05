@@ -1,4 +1,4 @@
-package ipvc.estg.git
+package ipvc.estg.cityhelp
 
 import org.junit.Test
 
