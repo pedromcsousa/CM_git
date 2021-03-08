@@ -24,7 +24,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             app:srcCompat="@drawable/ic_baseline_close_24"
-            android:tint="@color/white" />
+            app:tint="@color/white" />
     </LinearLayout>
 
     <ScrollView
@@ -45,4 +45,16 @@
         </androidx.recyclerview.widget.RecyclerView>
 
     </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_baseline_add_24"
+        android:background="@color/mainOrange"
+        android:layout_margin="16dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
