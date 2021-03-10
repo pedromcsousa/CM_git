@@ -3,9 +3,6 @@
     <string name="utilizador">Utilizador</string>
     <string name="palavra_passe">Palavra-Passe</string>
     <string name="title_activity_notas">NotasActivity</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
+    <string name="empty_not_saved">Nota vazia: não inserida</string>
     <string name="hello_world">Hello Square World!</string>
 </resources>

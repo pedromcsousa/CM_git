@@ -6,14 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import ipvc.estg.cityhelp.db.NotaDB
 import ipvc.estg.cityhelp.db.NotaRepositorio
-import ipvc.estg.cityhelp.data.Nota
+import ipvc.estg.cityhelp.entities.Nota
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NotaViewModal(application: Application) : AndroidViewModel(application) {
 
     private val repository: NotaRepositorio
-
     val allNotas: LiveData<List<Nota>>
 
     init {
@@ -24,6 +23,10 @@ class NotaViewModal(application: Application) : AndroidViewModel(application) {
 
     fun insert(nota: Nota) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(nota)
+    }
+
+    fun deleteAll() = viewModelScope.launch(Dispatchers.IO) {
+        repository.deleteAll()
     }
 
 }

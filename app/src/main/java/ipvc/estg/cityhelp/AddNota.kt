@@ -29,8 +29,8 @@ class AddNota : AppCompatActivity(){
             }else{
                 val titulo = addTitulo.text.toString()
                 val conteudo = addConteudo.text.toString()
-                replyIntent.putExtra(EXTRA_REPLY, titulo)
-                replyIntent.putExtra(EXTRA_REPLY, conteudo)
+                replyIntent.putExtra(EXTRA_REPLY_TITULO, titulo)
+                replyIntent.putExtra(EXTRA_REPLY_CONTEUDO, conteudo)
                 setResult(Activity.RESULT_OK, replyIntent)
             }
             finish()
@@ -38,7 +38,8 @@ class AddNota : AppCompatActivity(){
     }
 
     companion object{
-        const val EXTRA_REPLY = "com.example.wordlistsql.REPLY"
+        const val EXTRA_REPLY_TITULO = "com.example.android.titulo"
+        const val EXTRA_REPLY_CONTEUDO = "com.example.android.conteudo"
     }
 
 }
