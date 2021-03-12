@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name="ipvc.estg.cityhelp.MainActivity" />
+        <activity android:name="ipvc.estg.cityhelp.AddNotaActivity" />
     </application>
 
 </manifest>
