@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import ipvc.estg.cityhelp.ClickListenerNota
 import ipvc.estg.cityhelp.R
 import ipvc.estg.cityhelp.entities.Nota
 
 class NotaAdapter internal constructor(
-    context: Context
+    context: Context,
+    private val clickListenerNota: ClickListenerNota
 ) : RecyclerView.Adapter<NotaAdapter.NotaViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -30,6 +32,15 @@ class NotaAdapter internal constructor(
         val current = notas[position]
         holder.titulo.text = current.titulo
         holder.conteudo.text = current.conteudo
+
+        holder?.itemView?.setOnClickListener{ clickListenerNota.clickListenerNota(current) }
+        holder?.itemView?.setOnLongClickListener(object: View.OnLongClickListener {
+            override fun onLongClick(v: View?): Boolean {
+                clickListenerNota.longClickListenerNota(current)
+                return true;
+            }
+        })
+
     }
 
     internal fun setNotas(notas: List<Nota>){

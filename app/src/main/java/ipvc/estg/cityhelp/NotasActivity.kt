@@ -15,7 +15,12 @@ import ipvc.estg.cityhelp.adapter.NotaAdapter
 import ipvc.estg.cityhelp.entities.Nota
 import ipvc.estg.cityhelp.viewModal.NotaViewModal
 
-class NotasActivity : AppCompatActivity() {
+interface ClickListenerNota {
+    fun clickListenerNota(nota: Nota)
+    fun longClickListenerNota(nota: Nota)
+}
+
+class NotasActivity : AppCompatActivity(), ClickListenerNota {
 
     private lateinit var notaViewModel: NotaViewModal
     private val newWordActivityRequestCode = 1
@@ -27,7 +32,7 @@ class NotasActivity : AppCompatActivity() {
 
         // recycler view
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-        val adapter = NotaAdapter(this)
+        val adapter = NotaAdapter(this, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -41,7 +46,7 @@ class NotasActivity : AppCompatActivity() {
         //Fab
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            val intent = Intent(this@NotasActivity, AddNota::class.java)
+            val intent = Intent(this@NotasActivity, AddNotaActivity::class.java)
             startActivityForResult(intent, newWordActivityRequestCode)
         }
 
@@ -56,19 +61,66 @@ class NotasActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            val ptitulo = data?.getStringExtra(AddNota.EXTRA_REPLY_TITULO)
-            val pconteudo = data?.getStringExtra(AddNota.EXTRA_REPLY_CONTEUDO)
+            val inserir = data?.getBooleanExtra("INSERIR", true);
+            if (inserir!!) {
+                val ptitulo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_TITULO)
+                val pconteudo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_CONTEUDO)
 
-            if (ptitulo != null && pconteudo != null) {
-                val nota = Nota(titulo = ptitulo, conteudo = pconteudo, lastUpdate = java.util.Calendar.getInstance().toString())
-                notaViewModel.insert(nota)
+                if (ptitulo != null && pconteudo != null) {
+                    val nota = Nota(
+                        titulo = ptitulo,
+                        conteudo = pconteudo,
+                        lastUpdate = java.util.Calendar.getInstance().toString()
+                    )
+                    notaViewModel.insert(nota)
+                } else {
+                    SweetAlertDialog(this@NotasActivity)
+                        .setTitleText(R.string.empty_not_inserted)
+                        .show()
+                }
+            } else {
+                val ptitulo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_TITULO)
+                val pconteudo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_CONTEUDO)
+                val pid = data?.getIntExtra("EXTRA_ID", 0)
+                if (ptitulo != null && pconteudo != null && pid != 0) {
+                    val nota = Nota(
+                        id = pid,
+                        titulo = ptitulo,
+                        conteudo = pconteudo,
+                        lastUpdate = java.util.Calendar.getInstance().toString()
+                    )
+                    notaViewModel.update(nota)
+                } else {
+                    SweetAlertDialog(this@NotasActivity)
+                        .setTitleText(R.string.empty_not_updated)
+                        .show()
+                }
             }
-
-        } else {
-            SweetAlertDialog(this@NotasActivity)
-                .setTitleText(R.string.empty_not_saved)
-                .show()
         }
     }
+
+    override fun clickListenerNota(nota: Nota) {
+
+        val intent = Intent(this@NotasActivity, AddNotaActivity::class.java)
+        intent.putExtra("EXTRA_NOTA", nota.id);
+        startActivityForResult(intent, newWordActivityRequestCode)
+    }
+
+    override fun longClickListenerNota(nota: Nota) {
+
+        SweetAlertDialog(this@NotasActivity)
+            .setTitleText(getString(R.string.delete_note_confirm))
+            .setConfirmText(getString(R.string.yes))
+            .setConfirmClickListener { sDialog ->
+                nota.id?.let { it1 -> notaViewModel.delete(it1) }
+                sDialog.cancel()
+            }
+            .setCancelText(getString(R.string.no))
+            .show()
+    }
+
+}
+
+private fun Intent.putExtra(nota: String, nota1: Nota) {
 
 }

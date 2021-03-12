@@ -3,6 +3,12 @@
     <string name="utilizador">Utilizador</string>
     <string name="palavra_passe">Palavra-Passe</string>
     <string name="title_activity_notas">NotasActivity</string>
-    <string name="empty_not_saved">Nota vazia: não inserida</string>
+    <string name="empty_not_inserted">Nota com campos vazios: não inserida</string>
+    <string name="empty_not_updated">Nota com campos vazios: não editada</string>
     <string name="hello_world">Hello Square World!</string>
+    <string name="edit_nota">Editar Nota</string>
+    <string name="add_nota">Adicionar Nota</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="delete_note_confirm">Deseja eliminar a nota?</string>
 </resources>
