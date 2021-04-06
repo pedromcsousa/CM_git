@@ -46,7 +46,7 @@ class NotasActivity : AppCompatActivity(), ClickListenerNota {
         //Fab
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            val intent = Intent(this@NotasActivity, AddNotaActivity::class.java)
+            val intent = Intent(this@NotasActivity, NotaActivity::class.java)
             startActivityForResult(intent, newWordActivityRequestCode)
         }
 
@@ -63,8 +63,8 @@ class NotasActivity : AppCompatActivity(), ClickListenerNota {
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             val inserir = data?.getBooleanExtra("INSERIR", true);
             if (inserir!!) {
-                val ptitulo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_TITULO)
-                val pconteudo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_CONTEUDO)
+                val ptitulo = data?.getStringExtra(NotaActivity.EXTRA_REPLY_TITULO)
+                val pconteudo = data?.getStringExtra(NotaActivity.EXTRA_REPLY_CONTEUDO)
 
                 if (ptitulo != null && pconteudo != null) {
                     val nota = Nota(
@@ -79,8 +79,8 @@ class NotasActivity : AppCompatActivity(), ClickListenerNota {
                         .show()
                 }
             } else {
-                val ptitulo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_TITULO)
-                val pconteudo = data?.getStringExtra(AddNotaActivity.EXTRA_REPLY_CONTEUDO)
+                val ptitulo = data?.getStringExtra(NotaActivity.EXTRA_REPLY_TITULO)
+                val pconteudo = data?.getStringExtra(NotaActivity.EXTRA_REPLY_CONTEUDO)
                 val pid = data?.getIntExtra("EXTRA_ID", 0)
                 if (ptitulo != null && pconteudo != null && pid != 0) {
                     val nota = Nota(
@@ -101,7 +101,7 @@ class NotasActivity : AppCompatActivity(), ClickListenerNota {
 
     override fun clickListenerNota(nota: Nota) {
 
-        val intent = Intent(this@NotasActivity, AddNotaActivity::class.java)
+        val intent = Intent(this@NotasActivity, NotaActivity::class.java)
         intent.putExtra("EXTRA_NOTA", nota.id);
         startActivityForResult(intent, newWordActivityRequestCode)
     }

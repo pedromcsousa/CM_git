@@ -16,7 +16,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import ipvc.estg.cityhelp.viewModal.NotaViewModal
 
 
-class AddNotaActivity : AppCompatActivity(){
+class NotaActivity : AppCompatActivity(){
 
     private lateinit var addTitulo: EditText
     private lateinit var addConteudo: EditText
@@ -69,7 +69,7 @@ class AddNotaActivity : AppCompatActivity(){
                     }
                 }
 
-                SweetAlertDialog(this@AddNotaActivity)
+                SweetAlertDialog(this@NotaActivity)
                     .setTitleText(string)
                     .setConfirmText("Ok")
                     .setConfirmClickListener(SweetAlertDialog.OnSweetClickListener {

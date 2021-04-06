@@ -7,7 +7,7 @@
     android:background="@drawable/background"
     android:orientation="vertical"
     android:padding="15dp"
-    tools:context=".AddNotaActivity">
+    tools:context=".NotaActivity">
 
     <LinearLayout
         android:id="@+id/linear_layout_back"
