@@ -1,13 +1,13 @@
-package ipvc.estg.cityhelp.ui.dashboard
+package ipvc.estg.cityhelp.ui.add
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class AddViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "This is Add Fragment"
     }
     val text: LiveData<String> = _text
 }

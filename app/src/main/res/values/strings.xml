@@ -1,6 +1,7 @@
 <resources>
     <string name="sp_file">SPfile</string>
     <string name="logado">logado</string>
+    <string name="user">userLogado</string>
 
     <string name="app_name">CityHelp</string>
     <string name="utilizador">Utilizador</string>
@@ -16,6 +17,7 @@
     <string name="delete_note_confirm">Deseja eliminar a nota?</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_add">Adicionar</string>
+    <string name="title_opcoes">Opções</string>
+    <string name="sair">Terminar Sessão</string>
 </resources>

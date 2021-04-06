@@ -30,10 +30,11 @@ class LoginActivity: AppCompatActivity(){
         )
 
         val logado = sharedPref.getBoolean(getString(R.string.logado), false)
+        val userLogado = sharedPref.getString(getString(R.string.user), "")
 
         if(logado){
             val intent = Intent(this, MainActivity::class.java)
-            Toast.makeText(this@LoginActivity, "Bem Vindo de volta", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@LoginActivity, "Bem Vindo de volta, " + userLogado, Toast.LENGTH_SHORT).show()
             startActivity(intent)
             finish()
         }
@@ -72,10 +73,12 @@ class LoginActivity: AppCompatActivity(){
                         )
                         with(sharedPref.edit()){
                             putBoolean(getString(R.string.logado), true)
+                            putString(getString(R.string.user), user.text.toString())
                             commit()
                         }
                         startActivity(intent)
-                        Toast.makeText(this@LoginActivity, "Bem Vindo", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, "Bem Vindo, " + user.text.toString(), Toast.LENGTH_SHORT).show()
+                        finish()
                     }else{
                         Toast.makeText(this@LoginActivity, c.msg, Toast.LENGTH_SHORT).show()
                     }
