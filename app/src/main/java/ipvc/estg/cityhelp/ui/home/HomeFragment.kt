@@ -44,7 +44,7 @@ class HomeFragment : Fragment() {
 
         val request = ServiceBuilder.buildServer(EndPoints::class.java)
         val call = request.situacoes()
-        var position: LatLng
+        var position: LatLng = LatLng(-33.88, 151.21)
 
         call.enqueue(object : Callback<List<Situacao>> {
 
@@ -61,6 +61,7 @@ class HomeFragment : Fragment() {
                         )
                         mMap.addMarker(MarkerOptions().position(position).title(situacao.tipo + ": " + situacao.titulo))
                     }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
                 }
             }
 
