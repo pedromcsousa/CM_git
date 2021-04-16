@@ -1,10 +1,7 @@
 package ipvc.estg.cityhelp.api
 
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface EndPoints {
 
@@ -14,5 +11,8 @@ interface EndPoints {
 
     @GET("situacoes")
     fun situacoes(): Call<List<Situacao>>
+
+    @GET("situacao/{id}")
+    fun situacao(@Path("id") id: Int): Call<Situacao>
 
 }
