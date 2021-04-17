@@ -1,5 +1,6 @@
 package ipvc.estg.cityhelp.api
 
+import java.io.Serializable
 import java.sql.Timestamp
 
 data class Situacao(
@@ -12,4 +13,4 @@ data class Situacao(
     val geoY: String,
     val tipo: String,
     val utilizador: String
-)
+) : Serializable

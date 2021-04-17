@@ -1,6 +1,5 @@
 package ipvc.estg.cityhelp.ui.home
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -20,9 +20,12 @@ import ipvc.estg.cityhelp.R
 import ipvc.estg.cityhelp.api.EndPoints
 import ipvc.estg.cityhelp.api.ServiceBuilder
 import ipvc.estg.cityhelp.api.Situacao
+import ipvc.estg.cityhelp.ui.Convert
+import ipvc.estg.cityhelp.ui.Convert.objectToString
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class HomeFragment : Fragment() {
 
@@ -77,12 +80,18 @@ class HomeFragment : Fragment() {
                         mMap.addMarker(MarkerOptions()
                             .position(position)
                             .title(userLogado)
-                            .snippet(situacao.id)
+                            .snippet(objectToString(situacao))
+                            //.snippet(situacao.id)
                             .icon(BitmapDescriptorFactory.defaultMarker(cor))
                         )
                     }
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
                     mMap.setInfoWindowAdapter(WindowInfoAdapter(this@HomeFragment.context))
+                    mMap.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker ->
+                        var situacao : Situacao = Convert.stringToObject(marker.snippet) as Situacao
+                        if(marker.title.compareTo(situacao.utilizador) == 0)
+                            println("************ CLICK GERAL SITUACAO " +  situacao.titulo + "  ************")
+                    })
                 }
             }
 
