@@ -74,7 +74,7 @@
             android:textStyle="bold" />
 
         <Spinner
-            android:id="@+id/textTipoSituacao"
+            android:id="@+id/spinnerTipoSituacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -97,6 +97,18 @@
             android:gravity="start|top"
             android:inputType="textMultiLine" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            android:id="@+id/btnAddSituacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/submeter"/>
     </LinearLayout>
 
 </LinearLayout>
