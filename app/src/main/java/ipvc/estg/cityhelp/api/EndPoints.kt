@@ -9,6 +9,9 @@ interface EndPoints {
     @POST("login")
     fun login(@Field("user") user: String?, @Field("pass") pass: String?): Call<OutputGeral>
 
+    @DELETE("situacao/{id}")
+    fun delSituacao(@Path("id") id: Int): Call<OutputGeral>
+
     @GET("situacoes")
     fun situacoes(): Call<List<Situacao>>
 
