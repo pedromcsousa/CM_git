@@ -30,13 +30,10 @@ import retrofit2.Response
 class HomeFragment : Fragment() {
 
     private lateinit var situacoes: List<Situacao>
-    private lateinit var mMap : GoogleMap
+    lateinit var mMap: GoogleMap
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        mMap = googleMap
-        /*val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))*/
+    val callback = OnMapReadyCallback { googleMap ->
+            mMap = googleMap
     }
 
     override fun onCreateView(
@@ -45,8 +42,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-
-        val sharedPref : SharedPreferences = (this.activity as MainActivity).sharedPref
+        val sharedPref: SharedPreferences = (this.activity as MainActivity).sharedPref
 
         val userLogado = sharedPref.getString(getString(R.string.user), "")
 
@@ -62,35 +58,36 @@ class HomeFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     situacoes = response.body()!!
-                    for(situacao in situacoes){
+                    for (situacao in situacoes) {
                         position = LatLng(
                             situacao.geoX.toDouble(),
                             situacao.geoY.toDouble()
                         )
 
-                        var cor : Float
+                        var cor: Float
 
-                        if(situacao.tipo == 1.toString())
+                        if (situacao.tipo == 1.toString())
                             cor = BitmapDescriptorFactory.HUE_RED
-                        if(situacao.tipo == 2.toString())
+                        if (situacao.tipo == 2.toString())
                             cor = BitmapDescriptorFactory.HUE_YELLOW
                         else
                             cor = BitmapDescriptorFactory.HUE_BLUE
 
-                        mMap.addMarker(MarkerOptions()
-                            .position(position)
-                            .title(userLogado)
-                            .snippet(objectToString(situacao))
-                            //.snippet(situacao.id)
-                            .icon(BitmapDescriptorFactory.defaultMarker(cor))
+                        mMap.addMarker(
+                            MarkerOptions()
+                                .position(position)
+                                .title(userLogado)
+                                .snippet(objectToString(situacao))
+                                //.snippet(situacao.id)
+                                .icon(BitmapDescriptorFactory.defaultMarker(cor))
                         )
                     }
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
                     mMap.setInfoWindowAdapter(WindowInfoAdapter(this@HomeFragment.context))
                     mMap.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker ->
-                        var situacao : Situacao = Convert.stringToObject(marker.snippet) as Situacao
-                        if(marker.title.compareTo(situacao.utilizador) == 0)
-                            println("************ CLICK GERAL SITUACAO " +  situacao.titulo + "  ************")
+                        var situacao: Situacao = Convert.stringToObject(marker.snippet) as Situacao
+                        if (marker.title.compareTo(situacao.utilizador) == 0)
+                            println("************ CLICK GERAL SITUACAO " + situacao.titulo + "  ************")
                     })
                 }
             }
@@ -107,6 +104,5 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
-
     }
 }
