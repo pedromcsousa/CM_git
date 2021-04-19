@@ -48,6 +48,16 @@
             android:backgroundTint="@color/mainOrange"
             android:onClick="sair"
             android:text="@string/sair" />
+
+        <Button
+            android:id="@+id/btn_notas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:backgroundTint="@color/mainOrange"
+            android:onClick="entrarNotas"
+            android:text="@string/sair" />
     </LinearLayout>
 
 </RelativeLayout>
