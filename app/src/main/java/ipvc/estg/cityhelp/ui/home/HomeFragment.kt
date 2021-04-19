@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import ipvc.estg.cityhelp.MainActivity
 import ipvc.estg.cityhelp.R
 import ipvc.estg.cityhelp.api.EndPoints
+import ipvc.estg.cityhelp.api.OutputGeral
 import ipvc.estg.cityhelp.api.ServiceBuilder
 import ipvc.estg.cityhelp.api.Situacao
 import ipvc.estg.cityhelp.ui.Convert
@@ -49,6 +51,8 @@ class HomeFragment : Fragment() {
         val request = ServiceBuilder.buildServer(EndPoints::class.java)
         val call = request.situacoes()
         var position = LatLng(-33.88, 151.21)
+
+        var actividade = this.activity as MainActivity
 
         call.enqueue(object : Callback<List<Situacao>> {
 
@@ -88,6 +92,51 @@ class HomeFragment : Fragment() {
                         var situacao: Situacao = Convert.stringToObject(marker.snippet) as Situacao
                         if (marker.title.compareTo(situacao.utilizador) == 0)
                             println("************ CLICK GERAL SITUACAO " + situacao.titulo + "  ************")
+                    })
+                    mMap.setOnInfoWindowLongClickListener(GoogleMap.OnInfoWindowLongClickListener { marker ->
+                        var situacao: Situacao = Convert.stringToObject(marker.snippet) as Situacao
+                        if (marker.title.compareTo(situacao.utilizador) == 0){
+                            SweetAlertDialog(actividade)
+                                .setTitleText(getString(R.string.delete_activity_confirm))
+                                .setConfirmText(getString(R.string.yes))
+                                .setConfirmClickListener { sDialog ->
+                                    var c = request.delSituacao(situacao.id.toInt())
+                                    c.enqueue(object : Callback<OutputGeral> {
+
+                                        override fun onResponse(
+                                            ca: Call<OutputGeral>,
+                                            res: Response<OutputGeral>
+                                        ) {
+                                            if(response.isSuccessful){
+                                                val c: OutputGeral = res.body()!!
+                                                if(c.status){
+                                                    SweetAlertDialog(actividade)
+                                                        .setTitleText("Eliminado com sucesso")
+                                                        .show()
+                                                    marker.remove()
+                                                }else{
+                                                    SweetAlertDialog(actividade)
+                                                        .setTitleText(c.msg)
+                                                        .show()
+                                                }
+                                                sDialog.cancel()
+                                            }else{
+                                                SweetAlertDialog(actividade)
+                                                    .setTitleText("Erro na eliminação")
+                                                sDialog.cancel()
+                                            }
+                                        }
+                                        override fun onFailure(call: Call<OutputGeral>, t: Throwable) {
+                                            SweetAlertDialog(actividade)
+                                                .setTitleText("Erro na eliminação")
+                                            sDialog.cancel()
+                                        }
+
+                                    })
+                                }
+                                .setCancelText(getString(R.string.no))
+                                .show()
+                        }
                     })
                 }
             }

@@ -25,6 +25,7 @@
     <string name="sair">Terminar Sessão</string>
     <string name="submeter">Submeter</string>
     <string name="empty">Preencha todos os campos</string>
+    <string name="delete_activity_confirm">Deseja eliminar esta situação?</string>
     <string-array name="tiposSituacao">
         <item></item>
         <item>Problema</item>
