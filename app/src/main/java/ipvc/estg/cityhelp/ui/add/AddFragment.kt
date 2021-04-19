@@ -9,9 +9,14 @@ import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import cn.pedant.SweetAlert.SweetAlertDialog
 import ipvc.estg.cityhelp.R
+import ipvc.estg.cityhelp.ui.home.HomeFragment
+
 
 class AddFragment : Fragment() {
 
@@ -50,7 +55,18 @@ class AddFragment : Fragment() {
 
         val btnAddSituacao : Button = root.findViewById(R.id.btnAddSituacao)
         btnAddSituacao.setOnClickListener{
-            println(titulo.text.toString() + " - " + tipo.selectedItem + " (" + tipo.selectedItemId + ") - " + conteudo.text.toString())
+            var formTitulo = titulo.text.toString()
+            var formTipo = tipo.selectedItemId.toInt()
+            var formConteudo = conteudo.text.toString()
+            if(formTitulo == "" || formTipo == 0 || formConteudo == "") {
+                SweetAlertDialog(this.activity)
+                    .setTitleText(getString(R.string.empty))
+                    .setConfirmText("Ok")
+                    .show()
+            }else {
+                println(formTitulo + " - " + formTipo + " - " + formConteudo)
+                Navigation.findNavController(this.requireView()).navigate(R.id.navigation_home);
+            }
         }
 
         return root

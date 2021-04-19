@@ -24,9 +24,11 @@
     <string name="conteudo">Conteúdo</string>
     <string name="sair">Terminar Sessão</string>
     <string name="submeter">Submeter</string>
+    <string name="empty">Preencha todos os campos</string>
     <string-array name="tiposSituacao">
-        <item id="1" >Problema</item>
-        <item id="2">Sugestão</item>
-        <item id="3">Evento</item>
+        <item></item>
+        <item>Problema</item>
+        <item>Sugestão</item>
+        <item>Evento</item>
     </string-array>
 </resources>
