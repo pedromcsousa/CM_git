@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    fun entrarNotas() {
+    fun entrarNotas(view: View) {
         val intent = Intent(this, NotasActivity::class.java)
         startActivity(intent)
     }
