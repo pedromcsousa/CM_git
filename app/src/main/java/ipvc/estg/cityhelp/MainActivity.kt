@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.DrawableRes
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -31,12 +30,12 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import ipvc.estg.cityhelp.api.EndPoints
 import ipvc.estg.cityhelp.api.OutputGeral
 import ipvc.estg.cityhelp.api.ServiceBuilder
 import ipvc.estg.cityhelp.api.Situacao
 import ipvc.estg.cityhelp.ui.Convert
-import ipvc.estg.cityhelp.ui.home.HomeFragment
 import ipvc.estg.cityhelp.ui.home.WindowInfoAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -82,6 +81,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     public fun mapa() {
+
+        if (this::mMap.isInitialized)
+            mMap.clear()
+
         val sharedPref: SharedPreferences = sharedPref
 
         val userLogado = sharedPref.getString(getString(R.string.user), "")
