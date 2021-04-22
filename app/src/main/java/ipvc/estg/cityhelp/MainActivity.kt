@@ -3,6 +3,7 @@ package ipvc.estg.cityhelp
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.location.Location
 import android.os.Bundle
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -11,19 +12,23 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var sharedPref: SharedPreferences
+    lateinit var lastLocation: Location
+    lateinit  var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar!!.hide()
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
+
+        //localização
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         //SHARED PREFERENCES
         sharedPref = getSharedPreferences(
@@ -33,8 +38,6 @@ class MainActivity : AppCompatActivity() {
 
         //"MENU" DE BOTÕES
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications

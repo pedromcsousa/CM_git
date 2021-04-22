@@ -2,6 +2,7 @@ package ipvc.estg.cityhelp.ui.home
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import cn.pedant.SweetAlert.SweetAlertDialog
@@ -43,6 +45,26 @@ class HomeFragment : Fragment() {
 
     val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
+
+        setUpMap()
+    }
+
+    fun setUpMap(){
+
+        if(ActivityCompat.checkSelfPermission(this.requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this.requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            return
+        }else{
+            mMap.isMyLocationEnabled = true
+
+            (this.requireActivity() as MainActivity).fusedLocationClient.lastLocation.addOnSuccessListener(this.requireActivity()){ location ->
+                if(location != null){
+                    (this.requireActivity() as MainActivity).lastLocation = location
+                    val currentLatLng = LatLng(location.latitude, location.longitude)
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                }
+            }
+        }
     }
 
     override fun onCreateView(
@@ -101,7 +123,7 @@ class HomeFragment : Fragment() {
                                 .icon(bitmapDescriptorFromVector(context!!, icon))
                         )
                     }
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
                     mMap.setInfoWindowAdapter(WindowInfoAdapter(this@HomeFragment.context))
                     mMap.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker ->
                         var situacao: Situacao = Convert.stringToObject(marker.snippet) as Situacao
@@ -198,5 +220,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+
     }
 }
