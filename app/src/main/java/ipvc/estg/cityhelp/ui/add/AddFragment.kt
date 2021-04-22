@@ -9,24 +9,15 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import cn.pedant.SweetAlert.SweetAlertDialog
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import ipvc.estg.cityhelp.MainActivity
 import ipvc.estg.cityhelp.R
 import ipvc.estg.cityhelp.api.EndPoints
 import ipvc.estg.cityhelp.api.OutputGeral
 import ipvc.estg.cityhelp.api.ServiceBuilder
-import ipvc.estg.cityhelp.api.Situacao
-import ipvc.estg.cityhelp.ui.Convert
-import ipvc.estg.cityhelp.ui.home.HomeFragment
-import ipvc.estg.cityhelp.ui.home.WindowInfoAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,6 +32,7 @@ class AddFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         dashboardViewModel =
             ViewModelProvider(this).get(AddViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_add, container, false)
