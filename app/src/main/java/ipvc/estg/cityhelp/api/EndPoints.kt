@@ -1,5 +1,7 @@
 package ipvc.estg.cityhelp.api
 
+import android.graphics.Bitmap
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -17,5 +19,17 @@ interface EndPoints {
 
     @GET("situacao/{id}")
     fun situacao(@Path("id") id: Int): Call<Situacao>
+
+    @POST("situacao")
+    @Multipart
+    fun addSituacao(
+        @Query("titulo") titulo: String?,
+        @Query("descricao") descricao: String?,
+        @Query("tipo") tipo: String?,
+        @Part foto: MultipartBody.Part,
+        @Query("user") user: String?,
+        @Query("geoX") geoX: String?,
+        @Query("geoY") geoY: String?
+    ): Call<OutputGeral>
 
 }

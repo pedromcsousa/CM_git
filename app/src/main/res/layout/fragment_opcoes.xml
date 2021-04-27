@@ -57,7 +57,7 @@
             android:layout_marginRight="50dp"
             android:backgroundTint="@color/mainOrange"
             android:onClick="entrarNotas"
-            android:text="@string/sair" />
+            android:text="@string/notas" />
     </LinearLayout>
 
 </RelativeLayout>

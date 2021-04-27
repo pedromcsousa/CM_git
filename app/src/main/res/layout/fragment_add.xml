@@ -16,7 +16,7 @@
         android:padding="3dp">
 
         <ImageView
-            android:id="@+id/iconEdit"
+            android:id="@+id/addSituacaoFoto"
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:srcCompat="@drawable/ic_baseline_image_24" />
