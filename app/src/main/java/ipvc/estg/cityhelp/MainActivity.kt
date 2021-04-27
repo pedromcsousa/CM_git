@@ -15,6 +15,8 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -24,6 +26,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapFragment.newInstance
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -36,10 +39,12 @@ import ipvc.estg.cityhelp.api.OutputGeral
 import ipvc.estg.cityhelp.api.ServiceBuilder
 import ipvc.estg.cityhelp.api.Situacao
 import ipvc.estg.cityhelp.ui.Convert
+import ipvc.estg.cityhelp.ui.add.AddFragment
 import ipvc.estg.cityhelp.ui.home.WindowInfoAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Array.newInstance
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -139,8 +144,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     mMap.setInfoWindowAdapter(WindowInfoAdapter(context))
                     mMap.setOnInfoWindowClickListener(GoogleMap.OnInfoWindowClickListener { marker ->
                         var situacao: Situacao = Convert.stringToObject(marker.snippet) as Situacao
-                        if (marker.title.compareTo(situacao.utilizador) == 0)
-                            println("************ CLICK GERAL SITUACAO " + situacao.titulo + "  ************")
+                        if (marker.title.compareTo(situacao.utilizador) == 0) {
+                            val fragment: AddFragment = AddFragment()
+                            fragment.setSituacaoEditar(situacao)
+                            val transaction: FragmentTransaction =
+                                supportFragmentManager.beginTransaction()
+                            transaction.replace(R.id.nav_host_fragment, fragment).commit()
+                        }
                     })
                     mMap.setOnInfoWindowLongClickListener(GoogleMap.OnInfoWindowLongClickListener { marker ->
                         var situacao: Situacao = Convert.stringToObject(marker.snippet) as Situacao
