@@ -54,6 +54,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var mMap: GoogleMap
     private lateinit var situacoes: List<Situacao>
 
+    var filtroDist: Float = 100.toFloat()
+    var filtroTipo: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar!!.hide()
@@ -109,36 +112,62 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             ) {
                 if (response.isSuccessful) {
                     situacoes = response.body()!!
-                    for (situacao in situacoes) {
-                        position = LatLng(
-                            situacao.geoX.toDouble(),
-                            situacao.geoY.toDouble()
-                        )
 
-                        var icon: Int =
-                            if (situacao.utilizador == userLogado) {
-                                if (situacao.tipo.compareTo("Sugestão") == 0)
-                                    R.drawable.ic_baseline_highlight_24_blue
-                                else if (situacao.tipo.compareTo("Evento") == 0)
-                                    R.drawable.ic_baseline_event_24_blue
-                                else
-                                    R.drawable.ic_baseline_report_problem_24_blue
-                            } else {
-                                if (situacao.tipo.compareTo("Sugestão") == 0)
-                                    R.drawable.ic_baseline_highlight_24
-                                else if (situacao.tipo.compareTo("Evento") == 0)
-                                    R.drawable.ic_baseline_event_24
-                                else
-                                    R.drawable.ic_baseline_report_problem_24
+                    if (ActivityCompat.checkSelfPermission(
+                            this@MainActivity,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        ActivityCompat.requestPermissions(
+                            this@MainActivity,
+                            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                            1
+                        )
+                    } else {
+                        this@MainActivity.fusedLocationClient.lastLocation.addOnSuccessListener(
+                            this@MainActivity
+                        ) { loc ->
+                            val res: FloatArray = FloatArray(1)
+                            for (situacao in situacoes) {
+                                position = LatLng(
+                                    situacao.geoX.toDouble(),
+                                    situacao.geoY.toDouble()
+                                )
+
+                                var icon: Int =
+                                    if (situacao.utilizador == userLogado) {
+                                        if (situacao.tipo.compareTo("Sugestão") == 0)
+                                            R.drawable.ic_baseline_highlight_24_blue
+                                        else if (situacao.tipo.compareTo("Evento") == 0)
+                                            R.drawable.ic_baseline_event_24_blue
+                                        else
+                                            R.drawable.ic_baseline_report_problem_24_blue
+                                    } else {
+                                        if (situacao.tipo.compareTo("Sugestão") == 0)
+                                            R.drawable.ic_baseline_highlight_24
+                                        else if (situacao.tipo.compareTo("Evento") == 0)
+                                            R.drawable.ic_baseline_event_24
+                                        else
+                                            R.drawable.ic_baseline_report_problem_24
+                                    }
+
+                                Location.distanceBetween(
+                                    situacao.geoX.toDouble(),
+                                    situacao.geoY.toDouble(),
+                                    loc.latitude,
+                                    loc.longitude,
+                                    res
+                                )
+                                if (res[0] <= (filtroDist!! * 1000) && (filtroTipo == null || filtroTipo == situacao.tipo))
+                                    mMap.addMarker(
+                                        MarkerOptions()
+                                            .position(position)
+                                            .title(userLogado)
+                                            .snippet(Convert.objectToString(situacao))
+                                            .icon(bitmapDescriptorFromVector(context!!, icon))
+                                    )
                             }
-
-                        mMap.addMarker(
-                            MarkerOptions()
-                                .position(position)
-                                .title(userLogado)
-                                .snippet(Convert.objectToString(situacao))
-                                .icon(bitmapDescriptorFromVector(context!!, icon))
-                        )
+                        }
                     }
                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
                     mMap.setInfoWindowAdapter(WindowInfoAdapter(context))
