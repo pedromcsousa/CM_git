@@ -27,6 +27,8 @@
     <string name="empty">Preencha todos os campos</string>
     <string name="delete_activity_confirm">Deseja eliminar esta situação?</string>
     <string name="notas">Minhas Notas</string>
+    <string name="add_situacao">Adicionar Situação</string>
+    <string name="edit_situacao">Editar Situação</string>
     <string-array name="tiposSituacao">
         <item></item>
         <item>Problema</item>

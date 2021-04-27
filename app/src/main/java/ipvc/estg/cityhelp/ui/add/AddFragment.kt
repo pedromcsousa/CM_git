@@ -1,11 +1,9 @@
 package ipvc.estg.cityhelp.ui.add
 
-import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,15 +13,17 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.Navigation
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.squareup.picasso.Picasso
 import ipvc.estg.cityhelp.MainActivity
 import ipvc.estg.cityhelp.R
 import ipvc.estg.cityhelp.api.EndPoints
 import ipvc.estg.cityhelp.api.OutputGeral
 import ipvc.estg.cityhelp.api.ServiceBuilder
+import ipvc.estg.cityhelp.api.Situacao
+import ipvc.estg.cityhelp.ui.home.HomeFragment
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -35,11 +35,15 @@ import java.io.*
 
 class AddFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: AddViewModel
     private lateinit var foto: ImageView
     private lateinit var fotoPick: MultipartBody.Part
     var cameraIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
+    private var situacaoEditar: Situacao? = null
+
+    fun setSituacaoEditar(sit: Situacao) {
+        situacaoEditar = sit;
+    }
 
     private fun startGallery() {
         val cameraIntent = Intent(Intent.ACTION_GET_CONTENT)
@@ -102,21 +106,51 @@ class AddFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dashboardViewModel =
-            ViewModelProvider(this).get(AddViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_add, container, false)
-        val textView: TextView = root.findViewById(R.id.addSituacaoTitulo)
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-
-        //ELEMENTOS GERAIS
-        foto = root.findViewById(R.id.addSituacaoFoto);
 
         //ELEMENTOS FORMULÁRIO
         val titulo: TextView = root.findViewById(R.id.textTituloSituacao)
         val tipo: Spinner = root.findViewById(R.id.spinnerTipoSituacao)
         val conteudo: TextView = root.findViewById(R.id.textDescSituacao)
+
+        //SPINNER - CARREGAR TIPOS
+        ArrayAdapter.createFromResource(
+            this.requireContext(),
+            R.array.tiposSituacao,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            tipo.adapter = adapter
+        }
+
+        //ELEMENTOS GERAIS
+        foto = root.findViewById(R.id.addSituacaoFoto);
+        val tituloGeral: TextView = root.findViewById(R.id.addSituacaoTitulo)
+        val botaoClose: ImageView = root.findViewById(R.id.closeBTN)
+
+        //VER SE É ADD OU EDIT
+        if (situacaoEditar == null) {
+            tituloGeral.text = getString(R.string.add_situacao)
+        } else {
+            Picasso.get()
+                .load(situacaoEditar!!.foto)
+                .placeholder(R.drawable.ic_baseline_image_24)
+                .error(R.drawable.ic_baseline_image_not_supported_24)
+                .into(foto)
+            tituloGeral.text = getString(R.string.edit_situacao)
+            titulo.text = situacaoEditar!!.titulo
+            tipo.setSelection(
+                resources.getStringArray(R.array.tiposSituacao).indexOf(situacaoEditar!!.tipo)
+            )
+            conteudo.text = situacaoEditar!!.descricao
+            botaoClose.visibility = View.VISIBLE
+            botaoClose.setOnClickListener {
+                val fragment: HomeFragment = HomeFragment()
+                val transaction: FragmentTransaction =
+                    this.requireActivity().supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.nav_host_fragment, fragment).commit()
+            }
+        }
 
         foto.setOnClickListener {
             if (ActivityCompat.checkSelfPermission(
@@ -134,22 +168,12 @@ class AddFragment : Fragment() {
             }
         }
 
-        //SPINNER - CARREGAR TIPOS
-        val spinner: Spinner = root.findViewById(R.id.spinnerTipoSituacao)
-        ArrayAdapter.createFromResource(
-            this.requireContext(),
-            R.array.tiposSituacao,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
         val btnAddSituacao: Button = root.findViewById(R.id.btnAddSituacao)
         btnAddSituacao.setOnClickListener {
             var formTitulo = titulo.text.toString()
             var formTipo = tipo.selectedItemId.toInt()
             var formConteudo = conteudo.text.toString()
-            if (formTitulo == "" || formTipo == 0 || formConteudo == "" || !this::fotoPick.isInitialized) {
+            if (formTitulo == "" || formTipo == 0 || formConteudo == "" || (!this::fotoPick.isInitialized && situacaoEditar == null)) {
                 SweetAlertDialog(this.activity)
                     .setTitleText(getString(R.string.empty))
                     .setConfirmText("Ok")
@@ -161,6 +185,7 @@ class AddFragment : Fragment() {
                 val userLogado = sharedPref.getString(getString(R.string.user), "")
 
                 val requireView = this.requireView()
+                val actividade = this.requireActivity()
 
                 val request = ServiceBuilder.buildServer(EndPoints::class.java)
                 if (ActivityCompat.checkSelfPermission(
@@ -180,15 +205,23 @@ class AddFragment : Fragment() {
                         if (location != null) {
                             (this.requireActivity() as MainActivity).lastLocation = location
                             val currentLocation = location
-                            val call = request.addSituacao(
+                            val call = request.editSituacao(
+                                situacaoEditar!!.id.toInt(),
                                 formTitulo,
                                 formConteudo,
-                                formTipo.toString(),
-                                fotoPick,
-                                userLogado,
-                                location.latitude.toString(),
-                                location.longitude.toString()
+                                formTipo.toString()
                             )
+                            if (situacaoEditar == null) {
+                                val call = request.addSituacao(
+                                    formTitulo,
+                                    formConteudo,
+                                    formTipo.toString(),
+                                    fotoPick,
+                                    userLogado,
+                                    location.latitude.toString(),
+                                    location.longitude.toString()
+                                )
+                            }
 
                             call.enqueue(object : Callback<OutputGeral> {
 
@@ -196,10 +229,14 @@ class AddFragment : Fragment() {
                                     call: Call<OutputGeral>,
                                     response: Response<OutputGeral>
                                 ) {
-                                    println(response.toString())
-                                    if (response.isSuccessful) {
+                                    if (response.isSuccessful && situacaoEditar == null) {
                                         Navigation.findNavController(requireView)
                                             .navigate(R.id.navigation_home);
+                                    }else if(response.isSuccessful && situacaoEditar != null){
+                                        val fragment: HomeFragment = HomeFragment()
+                                        val transaction: FragmentTransaction =
+                                            actividade.supportFragmentManager.beginTransaction()
+                                        transaction.replace(R.id.nav_host_fragment, fragment).commit()
                                     }
                                 }
 

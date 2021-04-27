@@ -32,4 +32,13 @@ interface EndPoints {
         @Query("geoY") geoY: String?
     ): Call<OutputGeral>
 
+    @FormUrlEncoded
+    @PUT("situacao/{id}")
+    fun editSituacao(
+        @Path("id") id: Int,
+        @Field("titulo") titulo: String?,
+        @Field("descricao") descricao: String?,
+        @Field("tipo") tipo: String?
+    ): Call<OutputGeral>
+
 }
