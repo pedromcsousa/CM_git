@@ -31,6 +31,7 @@
     <string name="edit_situacao">Editar Situação</string>
     <string name="filtro_distancia">Filtro de distância:</string>
     <string name="filtro_tipo">Filtro de Tipos:</string>
+    <string name="norte">Norte</string>
     <string-array name="tiposSituacao">
         <item></item>
         <item>Problema</item>
