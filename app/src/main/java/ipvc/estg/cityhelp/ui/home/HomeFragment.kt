@@ -1,57 +1,128 @@
 package ipvc.estg.cityhelp.ui.home
 
+import android.content.Context
+import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.slider.Slider
+import ipvc.estg.cityhelp.MainActivity
 import ipvc.estg.cityhelp.R
 
-class HomeFragment : Fragment() {
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-    }
+class HomeFragment : Fragment(), SensorEventListener {
+
+    //SENSORES
+    private lateinit var sensorManager: SensorManager
+    private var temperatura: Sensor? = null
+
+    private lateinit var tempTXT : TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+
+        val atividade = (this.requireActivity() as MainActivity)
+
+        atividade.mapa()
+
+        val root = inflater.inflate(R.layout.fragment_home, container, false)
+
+        //SENSORES
+        tempTXT = root.findViewById(R.id.temperatura)
+        sensorManager = atividade.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        temperatura = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
+
+        //SPINNER - CARREGAR TIPOS
+        val tipo: Spinner = root.findViewById(R.id.spinnerTipoSituacao)
+        ArrayAdapter.createFromResource(
+            this.requireContext(),
+            R.array.tiposSituacao,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            tipo.adapter = adapter
+        }
+
+        tipo.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>?,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                if (position == 0)
+                    atividade.filtroTipo = null
+                else
+                    atividade.filtroTipo = resources.getStringArray(R.array.tiposSituacao)[position]
+                atividade.mapa()
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>?) {
+                atividade.filtroTipo = null
+            }
+        })
+
+        //DISTANCIA
+        val distanciaFiltro: TextView = root.findViewById(R.id.distanciaFiltro)
+        distanciaFiltro.text = atividade.filtroDist.toString() + "km"
+
+        val sliderFilter: Slider = root.findViewById(R.id.sliderFiltro)
+        sliderFilter.addOnChangeListener { rangeSlider, value, fromUser ->
+            distanciaFiltro.text = value.toString() + "km"
+            atividade.filtroDist = value
+        }
+        sliderFilter.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                //NADA
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                atividade.mapa()
+            }
+        })
+
+        return root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+    override fun onPause() {
+        // Be sure to unregister the sensor when the activity pauses.
+        super.onPause()
+        sensorManager.unregisterListener(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(this, temperatura, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        //dddd
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if(event.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE){
+            var temperaturaAtual = event.values[0];
+            tempTXT.text = temperaturaAtual.toInt().toString() + "ºC"
+            if(temperaturaAtual < 5){
+                tempTXT.setTextColor(Color.parseColor("#0000FF"))
+            }else if(temperaturaAtual < 20){
+                tempTXT.setTextColor(Color.parseColor("#00FF00"))
+            }else{
+                tempTXT.setTextColor(Color.parseColor("#FF0000"))
+            }
+        }
     }
 }

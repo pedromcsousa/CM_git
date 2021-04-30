@@ -1,8 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment" />
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:paddingHorizontal="5dp"
+    tools:context=".ui.home.HomeFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filtro_distancia"
+            android:textColor="@color/black"
+            android:textFontWeight="400"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/distanciaFiltro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="10sp"
+            android:textStyle="italic" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sliderFiltro"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:valueFrom="1"
+            android:valueTo="100"
+            android:value="100"
+            android:stepSize="1"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filtro_tipo"
+            android:textColor="@color/black"
+            android:textFontWeight="400"
+            android:textStyle="bold" />
+
+        <Spinner
+        android:id="@+id/spinnerTipoSituacao"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp" />
+
+    </LinearLayout>
+
+        <TextView
+            android:id="@+id/temperatura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="30ºC"
+            android:padding="5dp"
+            android:textSize="25sp"
+            android:gravity="center_horizontal" />
+
+
+</LinearLayout>
