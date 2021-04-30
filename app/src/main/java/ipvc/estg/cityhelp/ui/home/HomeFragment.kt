@@ -1,5 +1,11 @@
 package ipvc.estg.cityhelp.ui.home
 
+import android.content.Context
+import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +20,13 @@ import ipvc.estg.cityhelp.MainActivity
 import ipvc.estg.cityhelp.R
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), SensorEventListener {
+
+    //SENSORES
+    private lateinit var sensorManager: SensorManager
+    private var temperatura: Sensor? = null
+
+    private lateinit var tempTXT : TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,6 +39,11 @@ class HomeFragment : Fragment() {
         atividade.mapa()
 
         val root = inflater.inflate(R.layout.fragment_home, container, false)
+
+        //SENSORES
+        tempTXT = root.findViewById(R.id.temperatura)
+        sensorManager = atividade.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        temperatura = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE)
 
         //SPINNER - CARREGAR TIPOS
         val tipo: Spinner = root.findViewById(R.id.spinnerTipoSituacao)
@@ -78,5 +95,34 @@ class HomeFragment : Fragment() {
         })
 
         return root
+    }
+
+    override fun onPause() {
+        // Be sure to unregister the sensor when the activity pauses.
+        super.onPause()
+        sensorManager.unregisterListener(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(this, temperatura, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        //dddd
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if(event.sensor.type == Sensor.TYPE_AMBIENT_TEMPERATURE){
+            var temperaturaAtual = event.values[0];
+            tempTXT.text = temperaturaAtual.toInt().toString() + "ºC"
+            if(temperaturaAtual < 5){
+                tempTXT.setTextColor(Color.parseColor("#0000FF"))
+            }else if(temperaturaAtual < 20){
+                tempTXT.setTextColor(Color.parseColor("#00FF00"))
+            }else{
+                tempTXT.setTextColor(Color.parseColor("#FF0000"))
+            }
+        }
     }
 }

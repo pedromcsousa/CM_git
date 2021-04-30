@@ -1,16 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">CityHelp</string>
-    <string name="title_activity_main" translatable="false">MainActivity</string>
-    <string name="sp_file" translatable="false">SPfile</string>
-    <string name="logado" translatable="false">logado</string>
-    <string name="user" translatable="false">userLogado</string>
-    <string-array name="tiposSituacao" translatable="false">
-        <item></item>
-        <item>Problema</item>
-        <item>Sugestão</item>
-        <item>Evento</item>
-    </string-array>
-
     <string name="utilizador">Utilizador</string>
     <string name="palavra_passe">Palavra-Passe</string>
     <string name="empty_not_inserted">Nota com campos vazios: não inserida</string>

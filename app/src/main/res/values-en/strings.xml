@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="utilizador">Username</string>
+    <string name="palavra_passe">Password</string>
+    <string name="empty_not_inserted">Note with empty fields: not inserted</string>
+    <string name="empty_not_updated">Note with empty fields: not edited</string>
+    <string name="edit_nota">Edit Note</string>
+    <string name="add_nota">Add Note</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete_note_confirm">Do you want to delete the note?</string>
+    <string name="title">Title</string>
+    <string name="title_home">Home</string>
+    <string name="title_add">Add</string>
+    <string name="title_opcoes">Options</string>
+    <string name="tipo">Type</string>
+    <string name="conteudo">Contents</string>
+    <string name="sair">Log out</string>
+    <string name="submeter">Submit</string>
+    <string name="empty">Fill in all fields</string>
+    <string name="delete_activity_confirm">Do you want delete this situation?</string>
+    <string name="notas">My grades</string>
+    <string name="add_situacao">Add Situation</string>
+    <string name="edit_situacao">Edit Situation</string>
+    <string name="filtro_distancia">Filter distance:</string>
+    <string name="filtro_tipo">Type Filter:</string>
+    <string name="norte">North</string>
+</resources>

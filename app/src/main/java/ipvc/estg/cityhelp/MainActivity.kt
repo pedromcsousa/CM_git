@@ -7,15 +7,19 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,13 +30,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapFragment.newInstance
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import ipvc.estg.cityhelp.api.EndPoints
 import ipvc.estg.cityhelp.api.OutputGeral
@@ -41,12 +41,12 @@ import ipvc.estg.cityhelp.api.Situacao
 import ipvc.estg.cityhelp.ui.Convert
 import ipvc.estg.cityhelp.ui.add.AddFragment
 import ipvc.estg.cityhelp.ui.home.WindowInfoAdapter
+import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.reflect.Array.newInstance
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListener {
 
     lateinit var sharedPref: SharedPreferences
     lateinit var lastLocation: Location
@@ -54,14 +54,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var mMap: GoogleMap
     private lateinit var situacoes: List<Situacao>
 
+    //FILTRAR
     var filtroDist: Float = 100.toFloat()
     var filtroTipo: String? = null
+
+    //SENSORES
+    private lateinit var sensorManager: SensorManager
+    private var luminusidade: Sensor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar!!.hide()
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
+
+        //SENSORES
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        luminusidade = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
 
         //localização
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -86,6 +95,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+        // Do something here if sensor accuracy changes.
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if (event.sensor.type == Sensor.TYPE_LIGHT) {
+            if (event.values[0] < 20000 && this::mMap.isInitialized)
+                mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                        this, R.raw.style_dark_json
+                    )
+                );
+            else if (event.values[0] >= 20000 && this::mMap.isInitialized)
+                mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                        this, R.raw.style_normal_json
+                    )
+                );
+        }
+    }
+
+    override fun onPause() {
+        // Be sure to unregister the sensor when the activity pauses.
+        super.onPause()
+        sensorManager.unregisterListener(this)
+    }
+
+    override fun onResume() {
+        // Register a listener for the sensor.
+        super.onResume()
+        sensorManager.registerListener(this, luminusidade, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     public fun mapa() {
